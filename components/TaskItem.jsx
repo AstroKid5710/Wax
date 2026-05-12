@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import { CLASS_CONFIG } from '../lib/constants'
 import { dueDateLabel } from '../lib/dates'
 
@@ -87,6 +88,21 @@ export default function TaskItem({ task, onStatusChange }) {
         >
           {dateLabel.text}
         </span>
+      )}
+
+      {/* Focus button */}
+      {!isDone && (
+        <Link
+          href={`/focus?id=${task.id}`}
+          className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded text-stone-300 hover:text-stone-600 hover:bg-stone-100 transition-colors"
+          title="Focus on this task"
+          onClick={e => e.stopPropagation()}
+        >
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+            <circle cx="6.5" cy="6.5" r="2" fill="currentColor" />
+          </svg>
+        </Link>
       )}
     </div>
   )

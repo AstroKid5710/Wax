@@ -54,6 +54,12 @@
   }
 }
 
+/* Vinyl spin animation */
+@keyframes vinyl-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useState, createContext, useContext } from 'react'
 import Nav from './Nav'
 import AddTaskModal from './AddTaskModal'
+
+export const ModalContext = createContext(null)
+
+export function useModal() {
+  return useContext(ModalContext)
+}
 
 export default function Layout({ children, onTaskAdded }) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -23,17 +29,19 @@ export default function Layout({ children, onTaskAdded }) {
   }
 
   return (
-    <div className="min-h-screen bg-cream">
-      <Nav onAddTask={() => openModal()} />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        {typeof children === 'function' ? children({ openModal }) : children}
-      </main>
-      <AddTaskModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSave}
-        prefill={prefill}
-      />
-    </div>
+    <ModalContext.Provider value={{ openModal }}>
+      <div className="min-h-screen bg-cream">
+        <Nav onAddTask={() => openModal()} />
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+          {children}
+        </main>
+        <AddTaskModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSave={handleSave}
+          prefill={prefill}
+        />
+      </div>
+    </ModalContext.Provider>
   )
 }

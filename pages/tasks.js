@@ -4,7 +4,7 @@ import TaskItem from '../components/TaskItem'
 import { getTasks } from '../lib/notion'
 import { CLASS_NAMES, CLASS_CONFIG } from '../lib/constants'
 
-const STATUS_FILTERS = ['All', 'Not Started', 'In Progress', 'Done']
+const STATUS_FILTERS = ['All', 'Not started', 'In progress', 'Done']
 
 export default function Tasks({ initialTasks }) {
   const [tasks, setTasks] = useState(initialTasks)

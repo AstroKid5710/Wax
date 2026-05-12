@@ -9,37 +9,68 @@ const WORK_SECS = 25 * 60
 const BREAK_SECS = 5 * 60
 const POMODOROS_PER_SET = 4
 
-function BigVinyl({ isSpinning, timeStr }) {
+function BigVinyl({ isSpinning, timeStr, accentColor }) {
+  const hasAccent = !!accentColor
+  const labelFill = hasAccent ? accentColor : '#FAF7F2'
+  const labelTextColor = hasAccent ? 'rgba(255,255,255,0.92)' : '#1C1C1A'
+
   return (
-    <div className="relative" style={{ width: 224, height: 224 }}>
+    <div className="relative" style={{ width: 256, height: 256 }}>
       {/* Spinning disc */}
       <div
         className="absolute inset-0"
         style={{
-          animation: 'vinyl-spin 4s linear infinite',
+          animation: 'vinyl-spin 3.5s linear infinite',
           animationPlayState: isSpinning ? 'running' : 'paused',
+          willChange: 'transform',
         }}
       >
-        <svg width="224" height="224" viewBox="0 0 224 224" aria-hidden="true">
-          <circle cx="112" cy="112" r="111" fill="#1C1C1A" />
-          <circle cx="112" cy="112" r="102" fill="none" stroke="#2a2a28" strokeWidth="1.5" />
-          <circle cx="112" cy="112" r="90"  fill="none" stroke="#2a2a28" strokeWidth="1.5" />
-          <circle cx="112" cy="112" r="78"  fill="none" stroke="#2a2a28" strokeWidth="1.5" />
-          <circle cx="112" cy="112" r="66"  fill="none" stroke="#2a2a28" strokeWidth="1.5" />
-          <circle cx="112" cy="112" r="54"  fill="none" stroke="#2a2a28" strokeWidth="1.5" />
-          <circle cx="112" cy="112" r="42"  fill="none" stroke="#2a2a28" strokeWidth="1.5" />
+        <svg width="256" height="256" viewBox="0 0 256 256" aria-hidden="true">
+          <defs>
+            <radialGradient id="vgDisc" cx="42%" cy="37%" r="68%" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stopColor="#2A2A27" />
+              <stop offset="45%" stopColor="#181817" />
+              <stop offset="100%" stopColor="#0D0D0C" />
+            </radialGradient>
+            <radialGradient id="vgShine" cx="33%" cy="26%" r="58%" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.10)" />
+              <stop offset="40%" stopColor="rgba(255,255,255,0.03)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </radialGradient>
+          </defs>
+
+          {/* Main disc */}
+          <circle cx="128" cy="128" r="127" fill="url(#vgDisc)" />
+
+          {/* Dense groove rings */}
+          {Array.from({ length: 34 }, (_, i) => {
+            const r = 42 + i * 2.5
+            const opacity = i % 5 === 0 ? 0.10 : i % 3 === 0 ? 0.07 : i % 2 === 0 ? 0.05 : 0.03
+            const sw = i % 6 === 0 ? 1.2 : i % 3 === 0 ? 0.8 : 0.5
+            return (
+              <circle key={i} cx="128" cy="128" r={r} fill="none"
+                stroke={`rgba(255,255,255,${opacity})`} strokeWidth={sw} />
+            )
+          })}
+
+          {/* Shine overlay */}
+          <circle cx="128" cy="128" r="127" fill="url(#vgShine)" />
+
           {/* Center label */}
-          <circle cx="112" cy="112" r="30" fill="#FAF7F2" />
+          <circle cx="128" cy="128" r="36" fill={labelFill} />
+          <circle cx="128" cy="128" r="36" fill="none"
+            stroke={hasAccent ? 'rgba(0,0,0,0.20)' : 'rgba(0,0,0,0.08)'} strokeWidth="1.5" />
+
           {/* Spindle hole */}
-          <circle cx="112" cy="112" r="3.5" fill="#1C1C1A" />
+          <circle cx="128" cy="128" r="5" fill="#0D0D0C" />
         </svg>
       </div>
 
-      {/* Time — always upright, overlaid on center label */}
+      {/* Timer — always upright, centered on label */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span
           className="font-mono font-bold tracking-tight select-none"
-          style={{ fontSize: 20, color: '#1C1C1A', lineHeight: 1 }}
+          style={{ fontSize: 19, color: labelTextColor, lineHeight: 1 }}
         >
           {timeStr}
         </span>
@@ -118,6 +149,7 @@ export default function Focus({ task: initialTask, allTasks }) {
   }
 
   const dotsInSet = pomodorosDone % POMODOROS_PER_SET
+  const accentColor = mode === 'work' ? cfg.color : null
 
   return (
     <>
@@ -198,7 +230,7 @@ export default function Focus({ task: initialTask, allTasks }) {
           )}
 
           {/* Vinyl */}
-          <BigVinyl isSpinning={isRunning} timeStr={`${mm}:${ss}`} />
+          <BigVinyl isSpinning={isRunning} timeStr={`${mm}:${ss}`} accentColor={accentColor} />
 
           {/* Pomodoro dots */}
           <div className="flex items-center gap-2">
@@ -237,16 +269,10 @@ export default function Focus({ task: initialTask, allTasks }) {
 
           {/* Reset / Skip */}
           <div className="flex items-center gap-6">
-            <button
-              onClick={reset}
-              className="text-xs text-stone-400 hover:text-stone-700 transition-colors"
-            >
+            <button onClick={reset} className="text-xs text-stone-400 hover:text-stone-700 transition-colors">
               Reset
             </button>
-            <button
-              onClick={skip}
-              className="text-xs text-stone-400 hover:text-stone-700 transition-colors"
-            >
+            <button onClick={skip} className="text-xs text-stone-400 hover:text-stone-700 transition-colors">
               Skip {mode === 'work' ? '→ break' : '→ focus'}
             </button>
           </div>

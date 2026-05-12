@@ -6,6 +6,8 @@ const TABS = [
   { label: 'Tasks', href: '/tasks' },
   { label: 'Deadlines', href: '/deadlines' },
   { label: 'Subjects', href: '/subjects' },
+  { label: 'Calendar', href: '/calendar' },
+  { label: 'Today', href: '/daily' },
 ]
 
 function VinylLogo() {

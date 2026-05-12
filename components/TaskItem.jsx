@@ -12,7 +12,7 @@ export default function TaskItem({ task, onStatusChange }) {
     if (loading) return
     setLoading(true)
     try {
-      await onStatusChange(task.id, isDone ? 'Not Started' : 'Done')
+      await onStatusChange(task.id, isDone ? 'Not started' : 'Done')
     } finally {
       setLoading(false)
     }
